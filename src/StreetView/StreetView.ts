@@ -108,6 +108,20 @@ export const runStreetView = ({ google, panorama }: { google: GlobalGoogle; pano
     });
 
     return {
+        turnRight(delta: number) {
+            const pov = panorama.getPov();
+            panorama.setPov({
+                heading: (pov.heading ?? 0) + delta,
+                pitch: pov.pitch,
+            });
+        },
+        turnLeft(delta: number) {
+            const pov = panorama.getPov();
+            panorama.setPov({
+                heading: (pov.heading ?? 0) - delta,
+                pitch: pov.pitch,
+            });
+        },
         moveForward() {
             const pov = panorama.getPov();
             const nearestLink = findNearestLink(pov, panorama.getLinks());

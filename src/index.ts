@@ -1,6 +1,7 @@
 import { runStreetView } from "./StreetView/StreetView";
 import { GlobalGoogle } from "./Google";
 import { activateKeyboard } from "./RunningController/Keyboard";
+import { throttle } from "lodash-es";
 
 const debug = require("debug")("index.js");
 const getLocationFromGoogleMap = (mapURL: string) => {
@@ -35,24 +36,32 @@ export const run = (google: GlobalGoogle, container: HTMLElement) => {
         pov: pov,
         zoom: 1,
     });
-    const { moveForward, moveBackward, unload } = runStreetView({
+    const { moveForward, moveBackward, turnLeft, turnRight, unload } = runStreetView({
         google,
         panorama: streetViewPanorama,
+    });
+    const throttleForward = throttle(moveForward, 300, {
+        trailing: false,
+    });
+    const throttleBackward = throttle(moveBackward, 1000, {
+        trailing: false,
     });
     activateKeyboard(document.body, {
         onUp() {
             debug("Up");
-            moveForward();
+            throttleForward();
         },
         onDown() {
             debug("Down");
-            moveBackward();
+            throttleBackward();
         },
         onRight() {
             debug("Right");
+            turnRight(5);
         },
         onLeft() {
             debug("Left");
+            turnLeft(5);
         },
     });
     return () => {

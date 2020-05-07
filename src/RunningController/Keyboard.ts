@@ -23,8 +23,8 @@ export const activateKeyboard = (target: HTMLElement, props: activateKeyboardPro
                 return;
         }
     };
-    target.addEventListener("keyup", onKeyUp);
+    target.addEventListener("keydown", onKeyUp);
     return () => {
-        target.removeEventListener("keyup", onKeyUp);
+        target.removeEventListener("keydown", onKeyUp);
     };
 };
