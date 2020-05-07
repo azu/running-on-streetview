@@ -1,0 +1,80 @@
+{
+  "name": "running-on-streetview",
+  "version": "1.0.0",
+  "description": "Running on Google Street View.",
+  "keywords": [
+    "running",
+    "fitness",
+    "streetview",
+    "map",
+    "google"
+  ],
+  "homepage": "https://github.com/azu/running-on-streetview",
+  "bugs": {
+    "url": "https://github.com/azu/running-on-streetview/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/azu/running-on-streetview.git"
+  },
+  "license": "MIT",
+  "author": "azu",
+  "files": [
+    "bin/",
+    "lib/",
+    "src/"
+  ],
+  "main": "lib/running-on-streetview.js",
+  "types": "lib/running-on-streetview.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "dev": "parcel dev index.html",
+    "build": "parcel build index.html",
+    "clean": "rimraf lib/",
+    "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,css}\"",
+    "prepublish": "npm run --if-present build",
+    "test": "mocha \"test/**/*.ts\""
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "printWidth": 120,
+    "singleQuote": false,
+    "tabWidth": 4
+  },
+  "devDependencies": {
+    "@types/googlemaps": "^3.39.4",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.13.5",
+    "cross-env": "^7.0.2",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.2",
+    "mocha": "^7.1.2",
+    "parcel-bundler": "^1.12.4",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "ts-node": "^8.10.1",
+    "ts-node-test-register": "^8.0.1",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "p-queue": "^6.4.0",
+    "purecss": "^2.0.0"
+  },
+  "browserslist": [
+    "last 1 Chrome versions"
+  ]
+}

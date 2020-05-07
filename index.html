@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Running on StreetView</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./node_modules/purecss/build/pure-min.css">
+    <style>
+        #map {
+            height: 100%;
+        }
+
+        html, body, .App {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .App {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .App .StreetView {
+            flex: 9;
+        }
+
+        .App .RunningController {
+            flex: 1;
+            background-color: #ddd;
+        }
+
+        /* StreetView */
+        .StreetView, .StreetView-map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* RunningController */
+        .RunningController {
+            display: flex;
+        }
+
+        .RunningController > button {
+            flex: 1;
+        }
+
+        .RunningController-loadButton {
+            color: white;
+            background: rgb(28, 184, 65);
+        }
+
+    </style>
+</head>
+<body>
+<div class="App">
+    <!-- StreetView -->
+    <main class="StreetView">
+        <div id="js-street-view" class="StreetView-map"></div>
+    </main>
+    <!-- RunningController -->
+    <aside class="RunningController">
+        <button id="js-load-button" class="RunningController-loadButton pure-button">Load</button>
+    </aside>
+</div>
+<script src="./src/bootstrap.ts"></script>
+</body>
+</html>
