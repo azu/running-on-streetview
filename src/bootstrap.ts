@@ -2,8 +2,17 @@ import { run, RunConfig } from "./index";
 
 const debug = require("debug")("running:bootstrap");
 const videoElement = document.querySelector("#js-RunningController-video") as HTMLVideoElement;
+const inputGoogleMapAPIKey = document.querySelector("#js-google-map-api-key") as HTMLInputElement;
 const globalState = {
     start: false,
+    get googleMapAPIKey() {
+        return localStorage.getItem("running-googleMapAPIKey") ?? undefined;
+    },
+    set googleMapAPIKey(value: string | undefined) {
+        if (value) {
+            localStorage.setItem("running-googleMapAPIKey", value);
+        }
+    },
 };
 
 class Deferred<T extends any> {
@@ -105,16 +114,18 @@ const getMediaStream = () => {
     });
 };
 
-const loadButton = document.querySelector("#js-load-button") as HTMLButtonElement;
-loadButton.addEventListener("click", async () => {
+const loadForm = document.querySelector("#js-RunningController-controlForm") as HTMLFormElement;
+loadForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
     // Just call index.ts's entry point after loading libraries
+    const inputValue = inputGoogleMapAPIKey.value;
     let GoogleMapAPIKey =
-        process.env.GOOGLE_MAP_API_KEY ?? new URL(location.href).searchParams.get("GOOGLE_MAP_API_KEY");
-    if (!GoogleMapAPIKey) {
-        GoogleMapAPIKey = window.prompt("Input your Google Map AP IKey");
-    }
+        inputValue ?? process.env.GOOGLE_MAP_API_KEY ?? new URL(location.href).searchParams.get("GOOGLE_MAP_API_KEY");
     if (!GoogleMapAPIKey) {
         throw new Error("No defined GoogleMapAPIKey");
+    }
+    if (inputValue) {
+        globalState.googleMapAPIKey = inputValue;
     }
     const API = `https://maps.googleapis.com/maps/api/js?key=${GoogleMapAPIKey}&callback=initRunningStreetView`;
     const script = document.createElement("script");
@@ -127,4 +138,11 @@ loadButton.addEventListener("click", async () => {
     debug("MediaStream", mediaStream);
     _videoStream.resolve(mediaStream);
     videoElement.srcObject = mediaStream;
+});
+
+window.addEventListener("load", () => {
+    const apiKey = globalState.googleMapAPIKey;
+    if (apiKey) {
+        inputGoogleMapAPIKey.value = apiKey;
+    }
 });
