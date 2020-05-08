@@ -153,7 +153,9 @@ export const run = ({
                 debug("save panoramaState %o", panoramaState);
                 // https://stackoverflow.com/questions/387942/google-street-view-url
                 const googleMapURL = `https://www.google.com/maps/?layer=c&cbll=${panoramaState.position.lat},${panoramaState.position.lng}&cbp=,${panoramaState.pov.heading},,${panoramaState.pov.pitch}`;
-                setMapURL(`${currentUrl.origin}${currentUrl.pathname}?${encodeURIComponent(googleMapURL)}`);
+                setMapURL(
+                    `${currentUrl.origin}${currentUrl.pathname}?defaultMapUrl=${encodeURIComponent(googleMapURL)}`
+                );
             },
         }
     );
