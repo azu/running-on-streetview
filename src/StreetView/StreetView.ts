@@ -1,13 +1,12 @@
 import StreetViewPov = google.maps.StreetViewPov;
 import StreetViewLink = google.maps.StreetViewLink;
 import StreetViewPanorama = google.maps.StreetViewPanorama;
+import LatLngLiteral = google.maps.LatLngLiteral;
 import { GlobalGoogle } from "../Google";
 import PQueue from "p-queue";
-import LatLng = google.maps.LatLng;
 
 const debug = require("debug")("running:StreetView");
 const findFarthestLink = (currentPov: StreetViewPov, links: StreetViewLink[]): StreetViewLink | undefined => {
-    debug("findFarthestLink, current pov: %o, links: %o", currentPov, links);
     // TODO: should to use sorted algorithm
     const currentPovHeading = currentPov.heading ?? 0;
     let farthestDiff = 0; // heading is 0 ~ 360
@@ -26,12 +25,17 @@ const findFarthestLink = (currentPov: StreetViewPov, links: StreetViewLink[]): S
         }
     });
     const farthestLink = links[farthestLinkIndex];
-    debug("farthestLink: %o, index: %i", farthestLink, farthestLinkIndex);
+    debug(
+        "farthestLink: %o, index: %i, current pov: %o, links: %o",
+        farthestLink,
+        farthestLinkIndex,
+        currentPov,
+        links
+    );
     return farthestLink;
 };
 
 const findNearestLink = (currentPov: StreetViewPov, links: StreetViewLink[]): StreetViewLink | undefined => {
-    debug("current pov: %o, links: %o", currentPov, links);
     // TODO: should to use sorted algorithm
     const currentPovHeading = currentPov.heading ?? 0;
     let nearestDiff = 360; // heading is 0 ~ 360
@@ -50,7 +54,7 @@ const findNearestLink = (currentPov: StreetViewPov, links: StreetViewLink[]): St
         }
     });
     const nearestLink = links[nearestLinkIndex];
-    debug("nearestLink: %o, index: %i", nearestLink, nearestLinkIndex);
+    debug("nearestLink: %o, index: %i, current pov: %o, links: %o", nearestLink, nearestLinkIndex, currentPov, links);
     return nearestLink;
 };
 
@@ -91,7 +95,7 @@ const createTransitionPovList = (currentPov: StreetViewPov, nextPov: StreetViewP
 export type PanoramaState = {
     pov: StreetViewPov;
     pano: string;
-    position: LatLng;
+    position: LatLngLiteral;
 };
 export type runStreetViewProps = {
     onStatusChange: () => void;
@@ -121,16 +125,16 @@ export const runStreetView = (
     });
 
     return {
-        load({ pov, pano, position }: PanoramaState) {
-            panorama.setPosition(position);
-            panorama.setPano(pano);
-            panorama.setPov(pov);
+        load({ pov, pano, position }: Partial<PanoramaState>) {
+            pov && panorama.setPov(pov);
+            pano && panorama.setPano(pano);
+            position && panorama.setPosition(position);
         },
         getState(): PanoramaState {
             return {
                 pov: panorama.getPov(),
                 pano: panorama.getPano(),
-                position: panorama.getPosition(),
+                position: panorama.getPosition().toJSON(),
             };
         },
         turnRight(delta: number) {

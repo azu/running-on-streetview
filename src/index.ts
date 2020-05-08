@@ -3,10 +3,17 @@ import { GlobalGoogle } from "./Google";
 import { activateKeyboard } from "./RunningController/Keyboard";
 import { throttle } from "lodash-es";
 import { activateMotionCamera } from "./RunningController/MotionCamera";
+import { LoadMap } from "./RunningController/LoadMap/LoadMap";
+import LatLngLiteral = google.maps.LatLngLiteral;
 
 const debug = require("debug")("running:index.js");
-const getLocationFromGoogleMap = (mapURL: string) => {
-    const match = new URL(mapURL).pathname.match(/@([\d.]+),([\d.]+)/);
+/**
+ * Parse Google Map URL
+ * https://www.google.co.jp/maps/@41.5486745,-2.3158727,3a,75y,195.8h,91.7t/data=!3m7!1e1!3m5!1sywBlNB_DZ2_yHwE-tspDDw!2e0!6s%2F%2Fgeo1.ggpht.com%2Fcbk%3Fpanoid%3DywBlNB_DZ2_yHwE-tspDDw%26output%3Dthumbnail%26cb_client%3Dmaps_sv.tactile.gps%26thumb%3D2%26w%3D203%26h%3D100%26yaw%3D134.36525%26pitch%3D0%26thumbfov%3D100!7i13312!8i6656?hl=ja
+ * @param mapURL
+ */
+const getLocationFromGoogleMap = (mapURL: string): LatLngLiteral | undefined => {
+    const match = new URL(mapURL).pathname.match(/@([-\d.]+),([-\d.]+)/);
     if (!match) {
         return undefined;
     }
@@ -86,7 +93,7 @@ export const run = ({
         pano: lastPanoramaState?.pano,
         zoom: 1,
     });
-    const { moveForward, moveBackward, turnLeft, turnRight, unload, getState } = runStreetView(
+    const { moveForward, moveBackward, turnLeft, turnRight, unload, getState, load } = runStreetView(
         {
             google,
             panorama: streetViewPanorama,
@@ -141,6 +148,19 @@ export const run = ({
             }
         );
     }
+
+    LoadMap({
+        onSubmit(url) {
+            const position = getLocationFromGoogleMap(url);
+            console.log("NEW positionpositionpositionpositionposition", position);
+            if (!position) {
+                return;
+            }
+            load({
+                position: position,
+            });
+        },
+    });
     return () => {
         streetViewPanorama.unbindAll();
         return Promise.all([unload()]);

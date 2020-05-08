@@ -43,6 +43,16 @@
 
         .RunningController > * {
             flex: 1;
+            /* center */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .RunningController-loadButton {
+            width: 100%;
+            height: 100%;
         }
 
         .RunningController-loadButton {
@@ -50,7 +60,7 @@
             background: rgb(28, 184, 65);
         }
 
-        .RunningController-window{
+        .RunningController-window {
             display: flex;
             align-content: center;
             align-items: center;
@@ -66,7 +76,9 @@
     </main>
     <!-- RunningController -->
     <aside class="RunningController">
-        <button id="js-load-button" class="RunningController-loadButton pure-button">Load</button>
+        <div class="RunningController-control">
+            <button id="js-load-button" class="RunningController-loadButton pure-button">Load</button>
+        </div>
         <div class="RunningController-window">
             <video autoplay id="js-RunningController-video" width="320" height="240"></video>
         </div>
