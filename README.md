@@ -2,15 +2,16 @@
 
 Running on Google Street View.
 
-## Install
-
-Install with [npm](https://www.npmjs.com/):
-
-    npm install running-on-streetview
-
 ## Usage
 
-- [ ] Write usage instructions
+1. Open URL
+2. Input your Google Map API Key
+3. Load Google Map Street View and Running!
+
+You can get Google Map API by own.
+
+- [Get an API Key  |  Maps JavaScript API  |  Google Developers](https://developers.google.com/maps/documentation/javascript/get-api-key?hl=ja)
+- [Google Maps PlatformのAPIキーの取得・発行について - 株式会社ゼンリンデータコム](https://www.zenrin-datacom.net/business/gmapsapi/api_key/index.html)
 
 ## Changelog
 
