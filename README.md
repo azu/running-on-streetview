@@ -2,6 +2,8 @@
 
 Running on Google Street View.
 
+[![running-on-streetview image](docs/resources/capture.png)](https://twitter.com/azu_re/status/1258700638990393344)
+
 ## Requirements
 
 - [ ] [Google Maps JavaScript API Key](https://developers.google.com/maps/documentation/javascript/get-api-key)
