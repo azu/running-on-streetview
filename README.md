@@ -23,7 +23,17 @@ You can get Google Map API from Google Cloud Platform Console.
 - [Get an API Key  |  Maps JavaScript API  |  Google Developers](https://developers.google.com/maps/documentation/javascript/get-api-key)
 - [Google Maps PlatformのAPIキーの取得・発行について - 株式会社ゼンリンデータコム](https://www.zenrin-datacom.net/business/gmapsapi/api_key/index.html)
 
+
 ## Tips
+
+### Shortcut
+
+- <kbd>↑</kbd>: Go forward
+- <kbd>←</kbd>: Turn left
+- <kbd>→</kbd>: Turn Right
+- <kbd>↓</kbd>: Go back forward
+
+### URL Hacking
 
 This app support some url parameters:
 
