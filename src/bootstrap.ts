@@ -1,4 +1,4 @@
-import { run } from "./index";
+import { run, RunConfig } from "./index";
 
 const debug = require("debug")("running:bootstrap");
 const videoElement = document.querySelector("#js-RunningController-video") as HTMLVideoElement;
@@ -34,10 +34,35 @@ const _videoStream = new Deferred<MediaStream>();
         return;
     }
     const container = document.querySelector("#js-street-view") as HTMLElement;
+    const controlContainer = document.querySelector("#js-RunningController-control") as HTMLDivElement;
+    // For hack from URL
+    const url = new URL(location.href);
+    const config: RunConfig = {
+        throttleForward: url.searchParams.get("throttleForward")
+            ? Number(url.searchParams.get("throttleForward"))
+            : undefined,
+        throttleBackward: url.searchParams.get("throttleBackward")
+            ? Number(url.searchParams.get("throttleBackward"))
+            : undefined,
+        defaultForwardStep: url.searchParams.get("defaultForwardStep")
+            ? Number(url.searchParams.get("defaultForwardStep"))
+            : undefined,
+        defaultMapUrl:
+            url.searchParams.get("defaultMapUrl") ??
+            "https://www.google.com/maps/@40.6110615,140.9482871,3a,75y,12.48h,93.15t/",
+    };
+    controlContainer.innerHTML = "";
     _videoStream.promise
         .then((mediaStream) => {
             globalState.start = true;
-            const unload = run({ google, container, mediaStream, videoElement });
+            const unload = run({
+                google,
+                container,
+                controlContainer: controlContainer,
+                mediaStream,
+                videoElement,
+                config,
+            });
             window.addEventListener(
                 "unload",
                 () => {
@@ -50,7 +75,7 @@ const _videoStream = new Deferred<MediaStream>();
         })
         .catch(() => {
             globalState.start = true;
-            const unload = run({ google, container });
+            const unload = run({ google, container, controlContainer: controlContainer, config });
             window.addEventListener(
                 "unload",
                 () => {
@@ -62,10 +87,8 @@ const _videoStream = new Deferred<MediaStream>();
             );
         });
 };
-const getMediaStrem = () => {
+const getMediaStream = () => {
     return navigator.mediaDevices.enumerateDevices().then(function (mediaDeviceInfoList) {
-        console.log("使える入出力デバイスs->", mediaDeviceInfoList);
-
         var videoDevices = mediaDeviceInfoList.filter(function (deviceInfo) {
             return deviceInfo.kind == "videoinput";
         });
@@ -100,7 +123,7 @@ loadButton.addEventListener("click", async () => {
     script.src = API;
     document.head.appendChild(script);
     // Get MediaStream
-    const mediaStream = await getMediaStrem();
+    const mediaStream = await getMediaStream();
     debug("MediaStream", mediaStream);
     _videoStream.resolve(mediaStream);
     videoElement.srcObject = mediaStream;

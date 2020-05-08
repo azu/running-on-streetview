@@ -5,6 +5,7 @@ import { throttle } from "lodash-es";
 import { activateMotionCamera } from "./RunningController/MotionCamera";
 import { LoadMap } from "./RunningController/LoadMap/LoadMap";
 import LatLngLiteral = google.maps.LatLngLiteral;
+import { StatusButton } from "./RunningController/StatusButton/StatusButton";
 
 const debug = require("debug")("running:index.js");
 /**
@@ -28,20 +29,48 @@ const getLocationFromGoogleMap = (mapURL: string): LatLngLiteral | undefined => 
         lng: lngNum,
     };
 };
+export type RunConfig = {
+    /**
+     * To load Default Map URL
+     */
+    defaultMapUrl: string;
+    /**
+     * 0 < x < 100
+     * Higher fast forward
+     * Default: 20
+     */
+    defaultForwardStep?: number;
+    /**
+     * throttle time(ms) to forward
+     * Default: 300
+     */
+    throttleForward?: number;
+    /**
+     * throttle time(ms) to backwar
+     * Default: 1000
+     */
+    throttleBackward?: number;
+};
 export const run = ({
     google,
     container,
+    controlContainer,
     mediaStream,
     videoElement,
+    config,
 }: {
     google: GlobalGoogle;
     container: HTMLElement;
+    controlContainer: HTMLElement;
     mediaStream?: MediaStream;
     videoElement?: HTMLVideoElement;
+    config: RunConfig;
 }) => {
-    const DEFAULT_FORWARD_STEP = 20;
+    const DEFAULT_FORWARD_STEP = config.defaultForwardStep ?? 20;
     const FORWARD_ONE_MOVE = 100; // 100 step = One Move
-    const state = {
+    type Status = "stopped" | "running";
+    const state: { playingStatus: Status; forwardCount: number } = {
+        playingStatus: "running",
         forwardCount: 0,
     };
     const action = {
@@ -76,13 +105,16 @@ export const run = ({
                 status: "NO_MOVE",
             } as const;
         },
+        togglePlayingStatus() {
+            if (state.playingStatus === "stopped") {
+                state.playingStatus = "running";
+            } else if (state.playingStatus === "running") {
+                state.playingStatus = "stopped";
+            }
+        },
     };
     const lastPanoramaState = action.loadPanoramaState();
-    const position = lastPanoramaState?.position ??
-        getLocationFromGoogleMap("https://www.google.com/maps/@40.6110615,140.9482871,3a,75y,12.48h,93.15t/") ?? {
-            lat: 34.769844,
-            lng: 138.014135,
-        };
+    const position = lastPanoramaState?.position ?? getLocationFromGoogleMap(config.defaultMapUrl);
     const pov = lastPanoramaState?.pov ?? {
         heading: 0,
         pitch: 0,
@@ -106,10 +138,10 @@ export const run = ({
             },
         }
     );
-    const throttleForward = throttle(moveForward, 300, {
+    const throttleForward = throttle(moveForward, config.throttleForward ?? 300, {
         trailing: false,
     });
-    const throttleBackward = throttle(moveBackward, 1000, {
+    const throttleBackward = throttle(moveBackward, config.throttleBackward ?? 1000, {
         trailing: false,
     });
     activateKeyboard(document.body, {
@@ -136,6 +168,9 @@ export const run = ({
             { mediaStream, videoElement },
             {
                 onTick({ diffPixelCount }) {
+                    if (state.playingStatus === "stopped") {
+                        return;
+                    }
                     if (diffPixelCount < thresholdPixel) {
                         return;
                     }
@@ -149,10 +184,9 @@ export const run = ({
         );
     }
 
-    LoadMap({
+    const unLoadMap = LoadMap(controlContainer, {
         onSubmit(url) {
             const position = getLocationFromGoogleMap(url);
-            console.log("NEW positionpositionpositionpositionposition", position);
             if (!position) {
                 return;
             }
@@ -161,8 +195,15 @@ export const run = ({
             });
         },
     });
+    const { setText, unload: unloadStatusButton } = StatusButton(controlContainer, {
+        defaultText: state.playingStatus,
+        onClick() {
+            action.togglePlayingStatus();
+            setText(state.playingStatus);
+        },
+    });
     return () => {
         streetViewPanorama.unbindAll();
-        return Promise.all([unload()]);
+        return Promise.all([unload(), unLoadMap(), unloadStatusButton()]);
     };
 };
