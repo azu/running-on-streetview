@@ -4,7 +4,7 @@ export type VisibleControllerProps = {
 export const VisibleController = (props: VisibleControllerProps) => {
     const onVisibleChange = () => {
         // ignore on fullscreen
-        if (document.fullscreenEnabled) {
+        if (document.fullscreenElement) {
             return;
         }
         props.onVisibleChange(document.hidden ? "hidden" : "visible");
