@@ -36,7 +36,7 @@ export const activateMotionCamera = (
     videoElement.addEventListener("loadedmetadata", () => {
         offscreen.width = videoElement.width;
         offscreen.height = videoElement.height;
-        document.body.appendChild(offscreen);
+        // document.body.appendChild(offscreen);
         offscreenCtx.drawImage(videoElement, 0, 0, videoElement.width, videoElement.height);
     });
     // 12fps?

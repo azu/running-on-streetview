@@ -34,6 +34,7 @@ Install devDependencies and Run `npm test`:
 ## Contributing
 
 Pull requests and stars are always welcome.
+Documentation improvements is also welcome!
 
 For bugs and feature requests, [please create an issue](https://github.com/azu/running-on-streetview/issues).
 
