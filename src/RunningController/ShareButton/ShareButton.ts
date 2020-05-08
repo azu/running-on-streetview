@@ -1,4 +1,4 @@
-import "./StatusButton.css";
+import "./ShareButton.css";
 export type LoadMapProps = {
     onClick: () => void;
 };
@@ -9,22 +9,24 @@ export function htmlToElement<T extends HTMLElement>(html: string): T {
     return template.content.firstElementChild as T;
 }
 
-export const StatusButton = (controlContainer: HTMLElement, props: { onClick(): void; defaultText: string }) => {
-    const button = htmlToElement(`<button type="button" class="StatusButton pure-button"/>`);
+export const ShareButton = (controlContainer: HTMLElement) => {
+    let shareUrl = "";
+    const button = htmlToElement(`<button class="ShareButton pure-button">Tweet your running</button>`);
     const onClick = (event: Event) => {
         event.preventDefault();
-        props.onClick();
+        const twitter = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+            shareUrl
+        )}&hashtags=RunningOnStreetView`;
+        window.open(twitter, "_blank");
     };
-    button.textContent = props.defaultText;
     button.addEventListener("click", onClick);
     controlContainer.appendChild(button);
     return {
-        setText(text: string) {
-            button.textContent = `Status: ${text}`;
+        setMapURL(url: string) {
+            shareUrl = url;
         },
         unload() {
             button.removeEventListener("submit", onClick);
-            controlContainer.removeChild(controlContainer);
         },
     };
 };

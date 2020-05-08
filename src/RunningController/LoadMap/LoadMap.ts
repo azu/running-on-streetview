@@ -1,3 +1,4 @@
+import "./LoadMap.css";
 const debug = require("debug")("running:LoadMap");
 export type LoadMapProps = {
     onSubmit: (url: string) => void;
@@ -11,7 +12,7 @@ export function htmlToElement<T extends HTMLElement>(html: string): T {
 export const LoadMap = (controlContainer: HTMLElement, props: LoadMapProps) => {
     const loadMapForm = htmlToElement(`<form class="LoadMap pure-form">
     <fieldset>
-        <input id="js-LoadMap-inputURL" type="url" placeholder="Google Map URL" />
+        <input id="js-LoadMap-inputURL" class="LoadMap-input" type="url" placeholder="Google Map URL" />
         <button type="submit" class="pure-button pure-button-primary">Load Map</button>
     </fieldset>
 </form>`);

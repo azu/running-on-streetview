@@ -7,6 +7,7 @@ import { LoadMap } from "./RunningController/LoadMap/LoadMap";
 import LatLngLiteral = google.maps.LatLngLiteral;
 import { StatusButton } from "./RunningController/StatusButton/StatusButton";
 import { VisibleController } from "./RunningController/VisibleController/VisibleController";
+import { ShareButton } from "./RunningController/ShareButton/ShareButton";
 
 const debug = require("debug")("running:index.js");
 /**
@@ -139,6 +140,7 @@ export const run = ({
         pano: lastPanoramaState?.pano,
         zoom: 1,
     });
+    const currentUrl = new URL(location.href);
     const { moveForward, moveBackward, turnLeft, turnRight, unload, getState, load } = runStreetView(
         {
             google,
@@ -149,6 +151,9 @@ export const run = ({
                 const panoramaState = getState();
                 action.savePanoramaState(panoramaState);
                 debug("save panoramaState %o", panoramaState);
+                // https://stackoverflow.com/questions/387942/google-street-view-url
+                const googleMapURL = `https://www.google.com/maps/?layer=c&cbll=${panoramaState.position.lat},${panoramaState.position.lng}&cbp=,${panoramaState.pov.heading},,${panoramaState.pov.pitch}`;
+                setMapURL(`${currentUrl.origin}${currentUrl.pathname}?${encodeURIComponent(googleMapURL)}`);
             },
         }
     );
@@ -209,7 +214,6 @@ export const run = ({
             });
         },
     });
-
     const { setText: setStatusText, unload: unloadStatusButton } = StatusButton(controlContainer, {
         defaultText: state.playingStatus,
         onClick() {
@@ -223,8 +227,15 @@ export const run = ({
             }
         },
     });
+    const { unload: unloadShareButton, setMapURL } = ShareButton(controlContainer);
     return () => {
         streetViewPanorama.unbindAll();
-        return Promise.all([unload(), unLoadMap(), unloadStatusButton(), unloadVisibleController()]);
+        return Promise.all([
+            unload(),
+            unLoadMap(),
+            unloadStatusButton(),
+            unloadVisibleController(),
+            unloadShareButton(),
+        ]);
     };
 };
