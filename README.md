@@ -37,10 +37,11 @@ You can get Google Map API from Google Cloud Platform Console.
 
 This app support some url parameters:
 
-- defaultMapUrl
-- defaultForwardStep
-- throttleBackward
-- throttleForward
+- `defaultMapUrl=<google street view url>`
+- `defaultForwardStep=<number>`
+- `throttleBackward=<number ms>`
+- `throttleForward=<number ms>`
+- `GOOGLE_MAP_API_KEY=<api-key>`
 
 For more details, see [src/bootstrap.ts](src/bootstrap.ts)
 
