@@ -2,6 +2,12 @@
 
 Running on Google Street View.
 
+## Requirements
+
+- [ ] [Google Maps JavaScript API Key](https://developers.google.com/maps/documentation/javascript/get-api-key)
+- [ ] A Browser that can use Video Camera device
+    - Tested on Google Chrome
+
 ## Usage
 
 1. Open URL
@@ -12,7 +18,7 @@ Running on Google Street View.
 
 You can get Google Map API from Google Cloud Platform Console.
 
-- [Get an API Key  |  Maps JavaScript API  |  Google Developers](https://developers.google.com/maps/documentation/javascript/get-api-key?hl=ja)
+- [Get an API Key  |  Maps JavaScript API  |  Google Developers](https://developers.google.com/maps/documentation/javascript/get-api-key)
 - [Google Maps PlatformのAPIキーの取得・発行について - 株式会社ゼンリンデータコム](https://www.zenrin-datacom.net/business/gmapsapi/api_key/index.html)
 
 ## Changelog
