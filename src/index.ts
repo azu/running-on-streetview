@@ -6,6 +6,7 @@ import { activateMotionCamera } from "./RunningController/MotionCamera";
 import { LoadMap } from "./RunningController/LoadMap/LoadMap";
 import LatLngLiteral = google.maps.LatLngLiteral;
 import { StatusButton } from "./RunningController/StatusButton/StatusButton";
+import { VisibleController } from "./RunningController/VisibleController/VisibleController";
 
 const debug = require("debug")("running:index.js");
 /**
@@ -107,10 +108,23 @@ export const run = ({
         },
         togglePlayingStatus() {
             if (state.playingStatus === "stopped") {
-                state.playingStatus = "running";
+                this.playStatus();
             } else if (state.playingStatus === "running") {
-                state.playingStatus = "stopped";
+                this.stopStatus();
             }
+            setStatusText(state.playingStatus);
+        },
+        playStatus() {
+            state.playingStatus = "running";
+            mediaStream?.getVideoTracks().forEach((track) => {
+                track.enabled = true;
+            });
+        },
+        stopStatus() {
+            state.playingStatus = "stopped";
+            mediaStream?.getVideoTracks().forEach((track) => {
+                track.enabled = false;
+            });
         },
     };
     const lastPanoramaState = action.loadPanoramaState();
@@ -195,15 +209,22 @@ export const run = ({
             });
         },
     });
-    const { setText, unload: unloadStatusButton } = StatusButton(controlContainer, {
+
+    const { setText: setStatusText, unload: unloadStatusButton } = StatusButton(controlContainer, {
         defaultText: state.playingStatus,
         onClick() {
             action.togglePlayingStatus();
-            setText(state.playingStatus);
+        },
+    });
+    const unloadVisibleController = VisibleController({
+        onVisibleChange(status: VisibilityState) {
+            if (status === "hidden") {
+                action.stopStatus();
+            }
         },
     });
     return () => {
         streetViewPanorama.unbindAll();
-        return Promise.all([unload(), unLoadMap(), unloadStatusButton()]);
+        return Promise.all([unload(), unLoadMap(), unloadStatusButton(), unloadVisibleController()]);
     };
 };
