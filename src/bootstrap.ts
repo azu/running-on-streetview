@@ -58,7 +58,7 @@ const _videoStream = new Deferred<MediaStream>();
             : undefined,
         defaultMapUrl:
             url.searchParams.get("defaultMapUrl") ??
-            "https://www.google.com/maps/@40.6110615,140.9482871,3a,75y,12.48h,93.15t/",
+            "https://www.google.com/maps/@40.6110615,140.9482871,0a,73.7y,1.16h,90t/data=!3m4!1e1!3m2!1sjBsnn5UBd-c3qy7uOagvpQ!2e0?source=apiv3",
     };
     controlContainer.innerHTML = "";
     _videoStream.promise
