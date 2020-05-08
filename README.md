@@ -10,7 +10,7 @@ Running on Google Street View.
 
 ## Usage
 
-1. Open URL: <https://running-on-streetview.netlify.app/>
+1. Open URL: <https://running-on-streetview.netlify.app>
 2. Input your Google Map API Key
 3. Load Google Map Street View and Running!
 
