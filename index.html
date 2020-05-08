@@ -41,13 +41,19 @@
             display: flex;
         }
 
-        .RunningController > button {
+        .RunningController > * {
             flex: 1;
         }
 
         .RunningController-loadButton {
             color: white;
             background: rgb(28, 184, 65);
+        }
+
+        .RunningController-window{
+            display: flex;
+            align-content: center;
+            align-items: center;
         }
 
     </style>
@@ -61,6 +67,9 @@
     <!-- RunningController -->
     <aside class="RunningController">
         <button id="js-load-button" class="RunningController-loadButton pure-button">Load</button>
+        <div class="RunningController-window">
+            <video autoplay id="js-RunningController-video" width="320" height="240"></video>
+        </div>
     </aside>
 </div>
 <script src="./src/bootstrap.ts"></script>

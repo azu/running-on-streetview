@@ -36,7 +36,8 @@
     "clean": "rimraf lib/",
     "prettier": "prettier --write \"**/*.{js,jsx,ts,tsx,css}\"",
     "prepublish": "npm run --if-present build",
-    "test": "mocha \"test/**/*.ts\""
+    "test": "mocha \"test/**/*.ts\"",
+    "debug:chrome": "/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome  --disable-gpu  --use-fake-device-for-media-stream --use-file-for-fake-video-capture=\"./debug/run-up.mjpeg\""
   },
   "husky": {
     "hooks": {
@@ -59,6 +60,7 @@
     "@types/lodash-es": "^4.17.3",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.13.5",
+    "@types/pixelmatch": "^5.2.1",
     "cross-env": "^7.0.2",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.2",
@@ -74,6 +76,7 @@
     "debug": "^4.1.1",
     "lodash-es": "^4.17.15",
     "p-queue": "^6.4.0",
+    "pixelmatch": "^5.2.0",
     "purecss": "^2.0.0"
   },
   "browserslist": [

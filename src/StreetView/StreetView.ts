@@ -3,8 +3,9 @@ import StreetViewLink = google.maps.StreetViewLink;
 import StreetViewPanorama = google.maps.StreetViewPanorama;
 import { GlobalGoogle } from "../Google";
 import PQueue from "p-queue";
+import LatLng = google.maps.LatLng;
 
-const debug = require("debug")("running-on-streetview:StreetView");
+const debug = require("debug")("running:StreetView");
 const findFarthestLink = (currentPov: StreetViewPov, links: StreetViewLink[]): StreetViewLink | undefined => {
     debug("findFarthestLink, current pov: %o, links: %o", currentPov, links);
     // TODO: should to use sorted algorithm
@@ -87,7 +88,18 @@ const createTransitionPovList = (currentPov: StreetViewPov, nextPov: StreetViewP
     }
 };
 
-export const runStreetView = ({ google, panorama }: { google: GlobalGoogle; panorama: StreetViewPanorama }) => {
+export type PanoramaState = {
+    pov: StreetViewPov;
+    pano: string;
+    position: LatLng;
+};
+export type runStreetViewProps = {
+    onStatusChange: () => void;
+};
+export const runStreetView = (
+    { google, panorama }: { google: GlobalGoogle; panorama: StreetViewPanorama },
+    props: runStreetViewProps
+) => {
     /**
      * Correct pov to nearest link
      */
@@ -104,10 +116,23 @@ export const runStreetView = ({ google, panorama }: { google: GlobalGoogle; pano
     const statusChangedListener = google.maps.event.addListener(panorama, "status_changed", () => {
         if (panorama.getStatus() == "OK") {
             correctForwardPov();
+            props.onStatusChange();
         }
     });
 
     return {
+        load({ pov, pano, position }: PanoramaState) {
+            panorama.setPosition(position);
+            panorama.setPano(pano);
+            panorama.setPov(pov);
+        },
+        getState(): PanoramaState {
+            return {
+                pov: panorama.getPov(),
+                pano: panorama.getPano(),
+                position: panorama.getPosition(),
+            };
+        },
         turnRight(delta: number) {
             const pov = panorama.getPov();
             panorama.setPov({
