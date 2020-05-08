@@ -22,11 +22,18 @@
         }
 
         .App .StreetView {
-            flex: 9;
+            flex: 8;
         }
 
         .App .RunningController {
             flex: 1;
+            color: white;
+            background-color: #3b4045;
+        }
+
+        .App .AppFooter {
+            font-size: 12px;
+            text-align: center;
             background-color: #ddd;
         }
 
@@ -83,7 +90,13 @@
 <div class="App">
     <!-- StreetView -->
     <main class="StreetView">
-        <div id="js-street-view" class="StreetView-map"></div>
+        <div id="js-street-view" class="StreetView-map">
+            <a
+                    class="pure-form-message-inline"
+                    href="https://github.com/azu/running-on-streetview"
+                    target="_blank">Please see usage before running!
+            </a>
+        </div>
     </main>
     <!-- RunningController -->
     <aside class="RunningController">
@@ -95,7 +108,8 @@
                         <label for="js-google-map-api-key">Google Map API Key:</label>
                         <input type="password" id="js-google-map-api-key"
                                class="RunningController-inputGoogleMapAPIKey">
-                        <span class="pure-form-message-inline">Required</span>
+                        <a class="pure-form-message-inline"
+                           href="https://github.com/azu/running-on-streetview#how-to-get-google-map-api-key">Required</a>
                     </div>
                     <div class="pure-controls">
                         <button type="submit" id="js-load-button" class="RunningController-loadButton pure-button">Load
@@ -108,6 +122,9 @@
             <video autoplay id="js-RunningController-video" width="320" height="240"></video>
         </div>
     </aside>
+    <footer class="AppFooter">
+        <p>MIT © azu - Source Code on <a href="https://github.com/azu/running-on-streetview">GitHub</a></p>
+    </footer>
 </div>
 <script src="./src/bootstrap.ts"></script>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
