@@ -4,7 +4,7 @@ import StreetViewPanorama = google.maps.StreetViewPanorama;
 import { GlobalGoogle } from "../Google";
 import PQueue from "p-queue";
 
-const debug = require("debug")("StreetView");
+const debug = require("debug")("running-on-streetview:StreetView");
 const findFarthestLink = (currentPov: StreetViewPov, links: StreetViewLink[]): StreetViewLink | undefined => {
     debug("findFarthestLink, current pov: %o, links: %o", currentPov, links);
     // TODO: should to use sorted algorithm

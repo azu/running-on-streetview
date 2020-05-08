@@ -1,6 +1,6 @@
 import { run } from "./index";
 
-const debug = require("debug")("bootstrap");
+const debug = require("debug")("running-on-streetview:bootstrap");
 const globalState = {
     start: false,
 };

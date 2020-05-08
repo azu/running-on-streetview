@@ -3,7 +3,7 @@ import { GlobalGoogle } from "./Google";
 import { activateKeyboard } from "./RunningController/Keyboard";
 import { throttle } from "lodash-es";
 
-const debug = require("debug")("index.js");
+const debug = require("debug")("running-on-streetview:index.js");
 const getLocationFromGoogleMap = (mapURL: string) => {
     const match = new URL(mapURL).pathname.match(/@([\d.]+),([\d.]+)/);
     if (!match) {
