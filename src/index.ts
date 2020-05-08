@@ -1,7 +1,7 @@
 import { PanoramaState, runStreetView } from "./StreetView/StreetView";
 import { GlobalGoogle } from "./Google";
 import { activateKeyboard } from "./RunningController/Keyboard";
-import { throttle } from "lodash-es";
+import throttle from "lodash-es/throttle";
 import { activateMotionCamera } from "./RunningController/MotionCamera";
 import { LoadMap } from "./RunningController/LoadMap/LoadMap";
 import LatLngLiteral = google.maps.LatLngLiteral;
