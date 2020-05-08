@@ -44,7 +44,7 @@ const _videoStream = new Deferred<MediaStream>();
     }
     const container = document.querySelector("#js-street-view") as HTMLElement;
     const controlContainer = document.querySelector("#js-RunningController-control") as HTMLDivElement;
-    // For hack from URL
+    // URL Hacking
     const url = new URL(location.href);
     const config: RunConfig = {
         throttleForward: url.searchParams.get("throttleForward")
