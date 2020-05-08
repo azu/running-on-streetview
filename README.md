@@ -81,3 +81,7 @@ MIT © azu
 <a href="https://www.netlify.com">
 <img src="https://www.netlify.com/img/global/badges/netlify-color-bg.svg" alt="Deploys by Netlify" />
 </a>
+
+## Acknowledgements
+
+- [GoogleStreetViewを足踏みで仮想散歩するPGM - Qiita](https://qiita.com/shizuoka_miyako_19911118/items/90553c64d2b6b7d888ec)
