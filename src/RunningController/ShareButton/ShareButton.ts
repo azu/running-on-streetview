@@ -11,7 +11,7 @@ export function htmlToElement<T extends HTMLElement>(html: string): T {
 
 export const ShareButton = (controlContainer: HTMLElement) => {
     let shareUrl = "";
-    const button = htmlToElement(`<button class="ShareButton pure-button">Tweet your running</button>`);
+    const button = htmlToElement(`<button class="ShareButton pure-button">Tweet your running location</button>`);
     const onClick = (event: Event) => {
         event.preventDefault();
         const twitter = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
