@@ -110,10 +110,11 @@ export const run = ({
         togglePlayingStatus() {
             if (state.playingStatus === "stopped") {
                 this.playStatus();
+                setStatusText(state.playingStatus);
             } else if (state.playingStatus === "running") {
                 this.stopStatus();
+                setStatusText(state.playingStatus + "🛑");
             }
-            setStatusText(state.playingStatus);
         },
         playStatus() {
             state.playingStatus = "running";
