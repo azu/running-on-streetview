@@ -15,7 +15,7 @@ export const StatusButton = (controlContainer: HTMLElement, props: { onClick(): 
         event.preventDefault();
         props.onClick();
     };
-    button.textContent = props.defaultText;
+    button.textContent = `Status: ${props.defaultText}`;
     button.addEventListener("click", onClick);
     controlContainer.appendChild(button);
     return {
