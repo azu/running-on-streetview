@@ -110,7 +110,6 @@ const load = async (APIKey?: string) => {
     let GoogleMapAPIKey =
         APIKey ?? process.env.GOOGLE_MAP_API_KEY ?? new URL(location.href).searchParams.get("GOOGLE_MAP_API_KEY");
     if (GoogleMapAPIKey && /trial/i.test(GoogleMapAPIKey)) {
-        globalState.trial = true;
         GoogleMapAPIKey = "AIzaSyCHT-d9KNsSTGuoNyNsLHnUlTQ4RifkEK0"; // Trial API Key
     }
     if (!GoogleMapAPIKey) {
