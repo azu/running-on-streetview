@@ -122,6 +122,9 @@ export const run = async ({
             }
         },
         playStatus() {
+            if (state.playingStatus === "expired-trial") {
+                return;
+            }
             state.playingStatus = "running";
             mediaStream?.getVideoTracks().forEach((track) => {
                 track.enabled = true;
