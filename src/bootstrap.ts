@@ -139,7 +139,7 @@ loadForm.addEventListener("submit", (event) => {
     load(inputValue);
 });
 
-window.addEventListener("load", () => {
+window.addEventListener("DOMContentLoaded", () => {
     const apiKey = globalState.googleMapAPIKey;
     if (apiKey) {
         inputGoogleMapAPIKey.value = apiKey;
