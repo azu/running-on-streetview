@@ -82,6 +82,7 @@
     "purecss": "^2.0.0"
   },
   "browserslist": [
-    "last 1 Chrome versions"
+    "last 1 Chrome versions",
+    "last 1 Safari versions"
   ]
 }
