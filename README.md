@@ -25,6 +25,8 @@ You can get Google Map API from Google Cloud Platform Console.
 - [【要確認】Google Maps Platform APIキーの取得方法と注意点 | ワードプレステーマTCD](https://design-plus1.com/tcd-w/2018/08/google-maps-platform-api.html)
 - [Google Maps PlatformのAPIキーの取得・発行について - 株式会社ゼンリンデータコム](https://www.zenrin-datacom.net/business/gmapsapi/api_key/index.html)
 
+You should add restriction to "HTTP Referer" to `https://running-on-streetview.netlify.app/*` for your API key.
+
 ## Tips
 
 ### Shortcut
