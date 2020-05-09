@@ -188,9 +188,18 @@ For more details, please see https://github.com/azu/running-on-streetview
             },
         }
     );
-    const throttleForward = throttle(moveForward, config.throttleForward ?? 300, {
-        trailing: false,
-    });
+    const throttleForward = throttle(
+        () => {
+            if (state.playingStatus === "stopped" || state.playingStatus === "expired-trial") {
+                return;
+            }
+            moveForward();
+        },
+        config.throttleForward ?? 300,
+        {
+            trailing: false,
+        }
+    );
     const throttleBackward = throttle(moveBackward, config.throttleBackward ?? 1000, {
         trailing: false,
     });
@@ -218,7 +227,7 @@ For more details, please see https://github.com/azu/running-on-streetview
             { mediaStream, videoElement },
             {
                 onTick({ diffPixelCount }) {
-                    if (state.playingStatus === "stopped") {
+                    if (state.playingStatus === "stopped" || state.playingStatus === "expired-trial") {
                         return;
                     }
                     if (diffPixelCount < thresholdPixel) {
