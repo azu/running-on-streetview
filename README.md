@@ -7,7 +7,7 @@ Running on Google Street View.
 ## Requirements
 
 - [ ] [Google Maps JavaScript API Key](https://developers.google.com/maps/documentation/javascript/get-api-key)
-    - If you do not have API Key, please use "Trial" on <https://running-on-streetview.netlify.app> 
+    - If you do not have API Key, please use "Free Trial" on <https://running-on-streetview.netlify.app> 
 - [ ] A Browser that can use Web Camera
     - Tested on Google Chrome and Macbook Pro
  
