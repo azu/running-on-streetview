@@ -27,6 +27,16 @@ class Deferred<T extends any> {
 }
 
 const _videoStream = new Deferred<MediaStream>();
+const defaultMapList = [
+    // Japan - Aomori
+    "https://www.google.com/maps/@40.6110615,140.9482871,0a,73.7y,1.16h,90t/data=!3m4!1e1!3m2!1sjBsnn5UBd-c3qy7uOagvpQ!2e0?source=apiv3",
+    // Brazil - Acre
+    "https://www.google.com/maps/@-8.1860182,-70.5101287,3a,75y,252.53h,102.85t/data=!3m7!1e1!3m5!1sO9kg48c0xjsHIWFP9QM6Ag!2e0!6s%2F%2Fgeo3.ggpht.com%2Fcbk%3Fpanoid%3DO9kg48c0xjsHIWFP9QM6Ag%26output%3Dthumbnail%26cb_client%3Dmaps_sv.tactile.gps%26thumb%3D2%26w%3D203%26h%3D100%26yaw%3D157.61475%26pitch%3D0%26thumbfov%3D100!7i13312!8i6656",
+    //  Kalaallit Nunaat - Søndre Strømfjord
+    "https://www.google.com/maps/@67.1527397,-50.0521744,3a,67.4y,283.74h,94.2t/data=!3m6!1e1!3m4!1sbIfSL7uZ9W6xtYU8Mp9agA!2e0!7i13312!8i6656",
+    // France - Pont Valentré
+    "https://www.google.com/maps/@44.4448569,1.4308371,3a,75y,85.52h,94.54t/data=!3m6!1e1!3m4!1sAF1QipOfdZnfctTa1Zx0b-nfGLpgDW4Y0e8jz2Bp7gRb!2e10!7i5376!8i2688",
+];
 (window as any).initRunningStreetView = () => {
     if (globalState.start) {
         debug("already started");
@@ -47,8 +57,7 @@ const _videoStream = new Deferred<MediaStream>();
             ? Number(url.searchParams.get("defaultForwardStep"))
             : undefined,
         defaultMapUrl:
-            url.searchParams.get("defaultMapUrl") ??
-            "https://www.google.com/maps/@40.6110615,140.9482871,0a,73.7y,1.16h,90t/data=!3m4!1e1!3m2!1sjBsnn5UBd-c3qy7uOagvpQ!2e0?source=apiv3",
+            url.searchParams.get("defaultMapUrl") ?? defaultMapList[Math.floor(Math.random() * defaultMapList.length)], // random
     };
     controlContainer.innerHTML = "";
     _videoStream.promise
