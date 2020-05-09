@@ -1,19 +1,9 @@
 import { run, RunConfig } from "./index";
+import { globalState } from "./GlobalState";
 
 const debug = require("debug")("running:bootstrap");
 const videoElement = document.querySelector("#js-RunningController-video") as HTMLVideoElement;
 const inputGoogleMapAPIKey = document.querySelector("#js-google-map-api-key") as HTMLInputElement;
-const globalState = {
-    start: false,
-    get googleMapAPIKey() {
-        return localStorage.getItem("running-googleMapAPIKey") ?? undefined;
-    },
-    set googleMapAPIKey(value: string | undefined) {
-        if (value) {
-            localStorage.setItem("running-googleMapAPIKey", value);
-        }
-    },
-};
 
 class Deferred<T extends any> {
     promise: Promise<T>;
@@ -62,9 +52,9 @@ const _videoStream = new Deferred<MediaStream>();
     };
     controlContainer.innerHTML = "";
     _videoStream.promise
-        .then((mediaStream) => {
+        .then(async (mediaStream) => {
             globalState.start = true;
-            const unload = run({
+            const unload = await run({
                 google,
                 container,
                 controlContainer: controlContainer,
@@ -82,9 +72,9 @@ const _videoStream = new Deferred<MediaStream>();
                 }
             );
         })
-        .catch(() => {
+        .catch(async () => {
             globalState.start = true;
-            const unload = run({ google, container, controlContainer: controlContainer, config });
+            const unload = await run({ google, container, controlContainer: controlContainer, config });
             window.addEventListener(
                 "unload",
                 () => {
@@ -115,17 +105,19 @@ const getMediaStream = () => {
 };
 
 const loadForm = document.querySelector("#js-RunningController-controlForm") as HTMLFormElement;
-loadForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    // Just call index.ts's entry point after loading libraries
-    const inputValue = inputGoogleMapAPIKey.value;
+const trialButton = document.querySelector("#js-trial-button") as HTMLButtonElement;
+const load = async (APIKey?: string) => {
     let GoogleMapAPIKey =
-        inputValue ?? process.env.GOOGLE_MAP_API_KEY ?? new URL(location.href).searchParams.get("GOOGLE_MAP_API_KEY");
+        APIKey ?? process.env.GOOGLE_MAP_API_KEY ?? new URL(location.href).searchParams.get("GOOGLE_MAP_API_KEY");
+    if (GoogleMapAPIKey && /trial/i.test(GoogleMapAPIKey)) {
+        globalState.trial = true;
+        GoogleMapAPIKey = "AIzaSyCHT-d9KNsSTGuoNyNsLHnUlTQ4RifkEK0"; // Trial API Key
+    }
     if (!GoogleMapAPIKey) {
         throw new Error("No defined GoogleMapAPIKey");
     }
-    if (inputValue) {
-        globalState.googleMapAPIKey = inputValue;
+    if (APIKey) {
+        globalState.googleMapAPIKey = APIKey;
     }
     const API = `https://maps.googleapis.com/maps/api/js?key=${GoogleMapAPIKey}&callback=initRunningStreetView`;
     const script = document.createElement("script");
@@ -138,6 +130,14 @@ loadForm.addEventListener("submit", async (event) => {
     debug("MediaStream", mediaStream);
     _videoStream.resolve(mediaStream);
     videoElement.srcObject = mediaStream;
+};
+trialButton.addEventListener("click", () => {
+    load("trial");
+});
+loadForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const inputValue = inputGoogleMapAPIKey.value;
+    load(inputValue);
 });
 
 window.addEventListener("load", () => {

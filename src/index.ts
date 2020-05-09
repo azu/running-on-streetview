@@ -8,6 +8,8 @@ import LatLngLiteral = google.maps.LatLngLiteral;
 import { StatusButton } from "./RunningController/StatusButton/StatusButton";
 import { VisibleController } from "./RunningController/VisibleController/VisibleController";
 import { ShareButton } from "./RunningController/ShareButton/ShareButton";
+import { createLocationTracker } from "./LocationTracker/LocationTracker";
+import { globalState } from "./GlobalState";
 
 const debug = require("debug")("running:index.js");
 /**
@@ -53,7 +55,7 @@ export type RunConfig = {
      */
     throttleBackward?: number;
 };
-export const run = ({
+export const run = async ({
     google,
     container,
     controlContainer,
@@ -70,10 +72,12 @@ export const run = ({
 }) => {
     const DEFAULT_FORWARD_STEP = config.defaultForwardStep ?? 20;
     const FORWARD_ONE_MOVE = 100; // 100 step = One Move
-    type Status = "stopped" | "running";
-    const state: { playingStatus: Status; forwardCount: number } = {
+    const TRIAL_COUNT_LIMIT = 30; // Hard limit for TRAIAL
+    const locationTracker = await createLocationTracker();
+    type Status = "stopped" | "running" | "expired-trial";
+    const state: { playingStatus: Status; forwardStepCount: number } = {
         playingStatus: "running",
-        forwardCount: 0,
+        forwardStepCount: 0,
     };
     const action = {
         savePanoramaState(state: PanoramaState) {
@@ -96,9 +100,9 @@ export const run = ({
             }
         },
         stepForward(step = DEFAULT_FORWARD_STEP) {
-            state.forwardCount += step;
-            if (state.forwardCount > FORWARD_ONE_MOVE) {
-                state.forwardCount = 0;
+            state.forwardStepCount += step;
+            if (state.forwardStepCount > FORWARD_ONE_MOVE) {
+                state.forwardStepCount = 0;
                 return {
                     status: "MOVE",
                 } as const;
@@ -108,12 +112,13 @@ export const run = ({
             } as const;
         },
         togglePlayingStatus() {
+            if (state.playingStatus === "expired-trial") {
+                return;
+            }
             if (state.playingStatus === "stopped") {
                 this.playStatus();
-                setStatusText(state.playingStatus);
             } else if (state.playingStatus === "running") {
                 this.stopStatus();
-                setStatusText(state.playingStatus + "🛑");
             }
         },
         playStatus() {
@@ -121,12 +126,19 @@ export const run = ({
             mediaStream?.getVideoTracks().forEach((track) => {
                 track.enabled = true;
             });
+            setStatusText(state.playingStatus + "🏃");
         },
         stopStatus() {
             state.playingStatus = "stopped";
             mediaStream?.getVideoTracks().forEach((track) => {
                 track.enabled = false;
             });
+            setStatusText(state.playingStatus + "🛑");
+        },
+        expireTrial() {
+            action.stopStatus();
+            state.playingStatus = "expired-trial";
+            setStatusText("Expired Trial 😞");
         },
     };
     const lastPanoramaState = action.loadPanoramaState();
@@ -148,8 +160,12 @@ export const run = ({
             panorama: streetViewPanorama,
         },
         {
-            onStatusChange: () => {
+            onStatusChange: async () => {
                 const panoramaState = getState();
+                await locationTracker.add({
+                    position: panoramaState.position,
+                    timestamp: Date.now(),
+                });
                 action.savePanoramaState(panoramaState);
                 debug("save panoramaState %o", panoramaState);
                 // https://stackoverflow.com/questions/387942/google-street-view-url
@@ -157,6 +173,18 @@ export const run = ({
                 setMapURL(
                     `${currentUrl.origin}${currentUrl.pathname}?defaultMapUrl=${encodeURIComponent(googleMapURL)}`
                 );
+                if (globalState.trial) {
+                    const countOfTrackingRecord = await locationTracker.count();
+                    if (countOfTrackingRecord >= TRIAL_COUNT_LIMIT) {
+                        action.expireTrial();
+                        alert(`Expire trial running!
+
+Please get Google Maps API by own!
+
+For more details, please see https://github.com/azu/running-on-streetview 
+`);
+                    }
+                }
             },
         }
     );
@@ -220,6 +248,11 @@ export const run = ({
     const { setText: setStatusText, unload: unloadStatusButton } = StatusButton(controlContainer, {
         defaultText: state.playingStatus,
         onClick() {
+            if (state.playingStatus === "expired-trial") {
+                alert("Trial already expired! Please see https://github.com/azu/running-on-streetview");
+                window.open("https://github.com/azu/running-on-streetview", "_blank");
+                return;
+            }
             action.togglePlayingStatus();
         },
     });

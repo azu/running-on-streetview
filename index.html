@@ -44,6 +44,11 @@
             height: 100%;
         }
 
+        .StreetView-placeholderText {
+            font-size: 24px;
+            margin: 12px ;
+        }
+
         /* RunningController */
         .RunningController {
             display: flex;
@@ -79,6 +84,11 @@
             background: rgb(28, 184, 65);
         }
 
+        .RunningController-trialButton {
+            color: white;
+            background: rgb(175, 27, 79);
+        }
+
         .RunningController-window {
             display: flex;
             align-content: center;
@@ -92,11 +102,12 @@
     <!-- StreetView -->
     <main class="StreetView">
         <div id="js-street-view" class="StreetView-map">
-            <a
-                    class="pure-form-message-inline"
-                    href="https://github.com/azu/running-on-streetview"
-                    target="_blank">Please see usage before running!
-            </a>
+            <p class="StreetView-placeholderText">
+                <a
+                        class="pure-form-message-inline"
+                        href="https://github.com/azu/running-on-streetview"
+                        target="_blank">Please see usage guide before running!</a>
+            </p>
         </div>
     </main>
     <!-- RunningController -->
@@ -110,10 +121,16 @@
                         <input type="password" id="js-google-map-api-key"
                                class="RunningController-inputGoogleMapAPIKey">
                         <a class="pure-form-message-inline"
-                           href="https://github.com/azu/running-on-streetview#how-to-get-google-map-api-key">Required</a>
+                           style="color:white"
+                           href="https://github.com/azu/running-on-streetview#how-to-get-google-map-api-key">*Required</a>
                     </div>
                     <div class="pure-controls">
                         <button type="submit" id="js-load-button" class="RunningController-loadButton pure-button">Load
+                        </button>
+                    </div>
+                    <div class="pure-controls">
+                        <button type="button" id="js-trial-button" class="RunningController-trialButton pure-button">
+                            Start Trial (Free and Limited)
                         </button>
                     </div>
                 </fieldset>

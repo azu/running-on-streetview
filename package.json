@@ -75,6 +75,7 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
+    "idb": "^5.0.2",
     "lodash-es": "^4.17.15",
     "p-queue": "^6.4.0",
     "pixelmatch": "^5.2.0",

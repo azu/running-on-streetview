@@ -7,6 +7,7 @@ Running on Google Street View.
 ## Requirements
 
 - [ ] [Google Maps JavaScript API Key](https://developers.google.com/maps/documentation/javascript/get-api-key)
+    - If you do not have API Key, please use "Trial" on <https://running-on-streetview.netlify.app> 
 - [ ] A Browser that can use Web Camera
     - Tested on Google Chrome and Macbook Pro
  
@@ -22,7 +23,6 @@ You can get Google Map API from Google Cloud Platform Console.
 
 - [Get an API Key  |  Maps JavaScript API  |  Google Developers](https://developers.google.com/maps/documentation/javascript/get-api-key)
 - [Google Maps PlatformのAPIキーの取得・発行について - 株式会社ゼンリンデータコム](https://www.zenrin-datacom.net/business/gmapsapi/api_key/index.html)
-
 
 ## Tips
 
