@@ -46,7 +46,37 @@
         }
 
         .StreetView-placeholder {
+            color: #777;
+            line-height: 1.6;
             padding: 0 1rem;
+            text-align: center;
+        }
+
+        .StreetView-placeholderHeader {
+            font-family: Raleway, Helvetica Neue, Helvetica, Arial, sans-serif;
+            max-width: 768px;
+            margin: 0 auto;
+            padding: 1em;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            background: #fff;
+            letter-spacing: .05em;
+        }
+
+        .StreetView-placeholderBody {
+            padding: 1rem;
+        }
+
+        .StreetView-placeholder h1 {
+            font-size: 2rem;
+            color: #4b4b4b;
+        }
+
+        .StreetView-placeholder h2 {
+            font-size: 1.2rem;
+            line-height: 1.5;
+            color: #666;
+            letter-spacing: -.02em;
         }
 
         .StreetView-placeholderText {
@@ -108,15 +138,19 @@
     <main class="StreetView">
         <div id="js-street-view" class="StreetView-map">
             <div class="StreetView-placeholder">
-                <h1>Running on StreetView</h1>
-                <p>You can run on Google Street view!</p>
-                <img src="./docs/resources/capture.png" alt="screenshot" height="300"/>
-                <p class="StreetView-placeholderText">
-                    <a
-                            class="pure-form-message-inline"
-                            href="https://github.com/azu/running-on-streetview"
-                            target="_blank">Please see usage guide before running!</a>
-                </p>
+                <header class="StreetView-placeholderHeader">
+                    <h1>Running on StreetView</h1>
+                    <h2>You can run on Google Street view!</h2>
+                </header>
+                <div class="StreetView-placeholderBody">
+                    <img src="./docs/resources/capture.png" alt="screenshot" height="300"/>
+                    <p class="StreetView-placeholderText">
+                        <a
+                                class="pure-form-message-inline"
+                                href="https://github.com/azu/running-on-streetview"
+                                target="_blank">Please see usage guide before running!</a>
+                    </p>
+                </div>
             </div>
         </div>
     </main>
