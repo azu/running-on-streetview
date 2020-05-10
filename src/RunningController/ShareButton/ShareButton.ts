@@ -1,4 +1,5 @@
 import "./ShareButton.css";
+
 export type LoadMapProps = {
     onClick: () => void;
 };
@@ -9,8 +10,15 @@ export function htmlToElement<T extends HTMLElement>(html: string): T {
     return template.content.firstElementChild as T;
 }
 
-export const ShareButton = (controlContainer: HTMLElement) => {
-    let shareUrl = "";
+export type ShareButtonProps = {
+    baseUrl?: string;
+    mapUrl: string;
+};
+
+export const ShareButton = (controlContainer: HTMLElement, props: ShareButtonProps) => {
+    const currentUrl = new URL(location.href);
+    const baseUrl = props.baseUrl ?? `${currentUrl.origin}${currentUrl.pathname}?defaultMapUrl=`;
+    let shareUrl = baseUrl + encodeURIComponent(props.mapUrl);
     const button = htmlToElement(`<button class="ShareButton pure-button">Tweet your running location</button>`);
     const onClick = (event: Event) => {
         event.preventDefault();
@@ -22,8 +30,10 @@ export const ShareButton = (controlContainer: HTMLElement) => {
     button.addEventListener("click", onClick);
     controlContainer.appendChild(button);
     return {
-        setMapURL(url: string) {
-            shareUrl = url;
+        update(props: Partial<ShareButtonProps>) {
+            if (props.mapUrl) {
+                shareUrl = baseUrl + encodeURIComponent(props.mapUrl);
+            }
         },
         unload() {
             button.removeEventListener("submit", onClick);

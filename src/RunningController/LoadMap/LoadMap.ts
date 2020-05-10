@@ -1,8 +1,10 @@
 import "./LoadMap.css";
+
 const debug = require("debug")("running:LoadMap");
 export type LoadMapProps = {
     onSubmit: (url: string) => void;
 };
+
 export function htmlToElement<T extends HTMLElement>(html: string): T {
     const template = document.createElement("template");
     template.innerHTML = html;
@@ -28,8 +30,13 @@ export const LoadMap = (controlContainer: HTMLElement, props: LoadMapProps) => {
     };
     loadMapForm.addEventListener("submit", onSubmit);
     controlContainer.appendChild(loadMapForm);
-    return () => {
-        loadMapForm.removeEventListener("submit", onSubmit);
-        controlContainer.removeChild(loadMapForm);
+    return {
+        update(_props: Partial<LoadMapProps>) {
+            throw new Error("Not implement yet");
+        },
+        unload() {
+            loadMapForm.removeEventListener("submit", onSubmit);
+            controlContainer.removeChild(loadMapForm);
+        },
     };
 };

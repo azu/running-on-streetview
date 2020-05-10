@@ -127,7 +127,7 @@ const load = async (APIKey?: string) => {
         throw new Error("No defined GoogleMapAPIKey");
     }
     if (APIKey) {
-        globalState.googleMapAPIKey = APIKey;
+        globalState.googleMapAPIKey = GoogleMapAPIKey;
     }
     const API = `https://maps.googleapis.com/maps/api/js?key=${GoogleMapAPIKey}&callback=initRunningStreetView`;
     const script = document.createElement("script");

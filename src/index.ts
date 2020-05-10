@@ -4,12 +4,13 @@ import { activateKeyboard } from "./RunningController/Keyboard";
 import throttle from "lodash-es/throttle";
 import { activateMotionCamera } from "./RunningController/MotionCamera";
 import { LoadMap } from "./RunningController/LoadMap/LoadMap";
-import LatLngLiteral = google.maps.LatLngLiteral;
 import { StatusButton } from "./RunningController/StatusButton/StatusButton";
 import { VisibleController } from "./RunningController/VisibleController/VisibleController";
 import { ShareButton } from "./RunningController/ShareButton/ShareButton";
 import { createLocationTracker } from "./LocationTracker/LocationTracker";
 import { globalState } from "./GlobalState";
+import LatLngLiteral = google.maps.LatLngLiteral;
+import StreetViewPov = google.maps.StreetViewPov;
 
 const debug = require("debug")("running:index.js");
 /**
@@ -32,6 +33,15 @@ const getLocationFromGoogleMap = (mapURL: string): LatLngLiteral | undefined => 
         lat: latNum,
         lng: lngNum,
     };
+};
+/**
+ * Create Street View Url
+ * https://stackoverflow.com/questions/387942/google-street-view-url
+ * @param position
+ * @param pov
+ */
+const createStreetViewURL = (position: LatLngLiteral, pov: StreetViewPov): string => {
+    return `https://www.google.com/maps/?layer=c&cbll=${position.lat},${position.lng}&cbp=,${pov.heading},,${pov.pitch}`;
 };
 export type RunConfig = {
     /**
@@ -129,34 +139,42 @@ export const run = async ({
             mediaStream?.getVideoTracks().forEach((track) => {
                 track.enabled = true;
             });
-            setStatusText(state.playingStatus + "🏃");
+            updateStatusButton({
+                text: state.playingStatus + "🏃",
+            });
         },
         stopStatus() {
             state.playingStatus = "stopped";
             mediaStream?.getVideoTracks().forEach((track) => {
                 track.enabled = false;
             });
-            setStatusText(state.playingStatus + "🛑");
+            updateStatusButton({
+                text: state.playingStatus + "🛑",
+            });
         },
         expireTrial() {
             action.stopStatus();
             state.playingStatus = "expired-trial";
-            setStatusText("Expired Trial 😞");
+            updateStatusButton({
+                text: "Expired Trial 😞",
+            });
         },
     };
     const lastPanoramaState = action.loadPanoramaState();
-    const position = lastPanoramaState?.position ?? getLocationFromGoogleMap(config.defaultMapUrl);
-    const pov = lastPanoramaState?.pov ?? {
+    const initialPosition = lastPanoramaState?.position ?? getLocationFromGoogleMap(config.defaultMapUrl);
+    if (!initialPosition) {
+        throw new Error("initial position can not parsed" + JSON.stringify(initialPosition));
+    }
+    const initialPov = lastPanoramaState?.pov ?? {
         heading: 0,
         pitch: 0,
     };
     const streetViewPanorama = new google.maps.StreetViewPanorama(container, {
-        position: position,
-        pov: pov,
+        position: initialPosition,
+        pov: initialPov,
         pano: lastPanoramaState?.pano,
         zoom: 1,
     });
-    const currentUrl = new URL(location.href);
     const { moveForward, moveBackward, turnLeft, turnRight, unload, getState, load } = runStreetView(
         {
             google,
@@ -171,11 +189,9 @@ export const run = async ({
                 });
                 action.savePanoramaState(panoramaState);
                 debug("save panoramaState %o", panoramaState);
-                // https://stackoverflow.com/questions/387942/google-street-view-url
-                const googleMapURL = `https://www.google.com/maps/?layer=c&cbll=${panoramaState.position.lat},${panoramaState.position.lng}&cbp=,${panoramaState.pov.heading},,${panoramaState.pov.pitch}`;
-                setMapURL(
-                    `${currentUrl.origin}${currentUrl.pathname}?defaultMapUrl=${encodeURIComponent(googleMapURL)}`
-                );
+                updateShareButton({
+                    mapUrl: createStreetViewURL(panoramaState.position, panoramaState.pov),
+                });
                 if (globalState.trial) {
                     const countOfTrackingRecord = await locationTracker.count();
                     if (countOfTrackingRecord >= TRIAL_COUNT_LIMIT) {
@@ -246,7 +262,7 @@ For more details, please see https://github.com/azu/running-on-streetview
         );
     }
 
-    const unLoadMap = LoadMap(controlContainer, {
+    const { unload: unloadLoadMap } = LoadMap(controlContainer, {
         onSubmit(url) {
             const position = getLocationFromGoogleMap(url);
             if (!position) {
@@ -257,8 +273,8 @@ For more details, please see https://github.com/azu/running-on-streetview
             });
         },
     });
-    const { setText: setStatusText, unload: unloadStatusButton } = StatusButton(controlContainer, {
-        defaultText: state.playingStatus,
+    const { update: updateStatusButton, unload: unloadStatusButton } = StatusButton(controlContainer, {
+        text: state.playingStatus,
         onClick() {
             if (state.playingStatus === "expired-trial") {
                 alert("Trial already expired! Please see https://github.com/azu/running-on-streetview");
@@ -275,12 +291,14 @@ For more details, please see https://github.com/azu/running-on-streetview
             }
         },
     });
-    const { unload: unloadShareButton, setMapURL } = ShareButton(controlContainer);
+    const { unload: unloadShareButton, update: updateShareButton } = ShareButton(controlContainer, {
+        mapUrl: createStreetViewURL(initialPosition, initialPov),
+    });
     return () => {
         streetViewPanorama.unbindAll();
         return Promise.all([
             unload(),
-            unLoadMap(),
+            unloadLoadMap(),
             unloadStatusButton(),
             unloadVisibleController(),
             unloadShareButton(),
