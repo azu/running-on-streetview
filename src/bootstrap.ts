@@ -1,4 +1,4 @@
-import { run, RunConfig } from "./index";
+import type { RunConfig } from "./index";
 import { globalState } from "./GlobalState";
 
 const debug = require("debug")("running:bootstrap");
@@ -37,69 +37,72 @@ const defaultMapList = [
     // France - Pont Valentré
     "https://www.google.com/maps/@44.4448569,1.4308371,3a,75y,85.52h,94.54t/data=!3m6!1e1!3m4!1sAF1QipOfdZnfctTa1Zx0b-nfGLpgDW4Y0e8jz2Bp7gRb!2e10!7i5376!8i2688",
     // Česko - Olomouc
-    "https://www.google.com/maps/@49.5949955,17.2569492,2a,75y,147.03h,93.75t/data=!3m6!1e1!3m4!1sj3Ao-jUkkaCmD7X68dbioQ!2e0!7i13312!8i6656",
+    "https://www.google.com/maps/@49.5949955,17.2569492,2a,75y,147.03h,93.75t/data=!3m6!1e1!3m4!1sj3Ao-jUkkaCmD7X68dbioQ!2e0!7i13312!8i6656"
 ];
-(window as any).initRunningStreetView = () => {
-    if (globalState.start) {
-        debug("already started");
-        return;
-    }
-    const container = document.querySelector("#js-street-view") as HTMLElement;
-    const controlContainer = document.querySelector("#js-RunningController-control") as HTMLDivElement;
-    // URL Hacking
-    const url = new URL(location.href);
-    const config: RunConfig = {
-        throttleForward: url.searchParams.get("throttleForward")
-            ? Number(url.searchParams.get("throttleForward"))
-            : undefined,
-        throttleBackward: url.searchParams.get("throttleBackward")
-            ? Number(url.searchParams.get("throttleBackward"))
-            : undefined,
-        defaultForwardStep: url.searchParams.get("defaultForwardStep")
-            ? Number(url.searchParams.get("defaultForwardStep"))
-            : undefined,
-        defaultMapUrl:
-            url.searchParams.get("defaultMapUrl") ?? defaultMapList[Math.floor(Math.random() * defaultMapList.length)], // random
-    };
-    controlContainer.innerHTML = "";
-    _videoStream.promise
-        .then(async (mediaStream) => {
-            globalState.start = true;
-            const unload = await run({
-                google,
-                container,
-                controlContainer: controlContainer,
-                mediaStream,
-                videoElement,
-                config,
+(async () => {
+    const run = await import("./index.ts")
+    (window as any).initRunningStreetView = () => {
+        if (globalState.start) {
+            debug("already started");
+            return;
+        }
+        const container = document.querySelector("#js-street-view") as HTMLElement;
+        const controlContainer = document.querySelector("#js-RunningController-control") as HTMLDivElement;
+        // URL Hacking
+        const url = new URL(location.href);
+        const config: RunConfig = {
+            throttleForward: url.searchParams.get("throttleForward")
+                ? Number(url.searchParams.get("throttleForward"))
+                : undefined,
+            throttleBackward: url.searchParams.get("throttleBackward")
+                ? Number(url.searchParams.get("throttleBackward"))
+                : undefined,
+            defaultForwardStep: url.searchParams.get("defaultForwardStep")
+                ? Number(url.searchParams.get("defaultForwardStep"))
+                : undefined,
+            defaultMapUrl:
+                url.searchParams.get("defaultMapUrl") ?? defaultMapList[Math.floor(Math.random() * defaultMapList.length)] // random
+        };
+        controlContainer.innerHTML = "";
+        _videoStream.promise
+            .then(async (mediaStream) => {
+                globalState.start = true;
+                const unload = await run({
+                    google,
+                    container,
+                    controlContainer: controlContainer,
+                    mediaStream,
+                    videoElement,
+                    config
+                });
+                window.addEventListener(
+                    "unload",
+                    () => {
+                        unload();
+                    },
+                    {
+                        once: true
+                    }
+                );
+            })
+            .catch(async () => {
+                globalState.start = true;
+                const unload = await run({ google, container, controlContainer: controlContainer, config });
+                window.addEventListener(
+                    "unload",
+                    () => {
+                        unload();
+                    },
+                    {
+                        once: true
+                    }
+                );
             });
-            window.addEventListener(
-                "unload",
-                () => {
-                    unload();
-                },
-                {
-                    once: true,
-                }
-            );
-        })
-        .catch(async () => {
-            globalState.start = true;
-            const unload = await run({ google, container, controlContainer: controlContainer, config });
-            window.addEventListener(
-                "unload",
-                () => {
-                    unload();
-                },
-                {
-                    once: true,
-                }
-            );
-        });
-};
+    };
+})();
 const getMediaStream = () => {
-    return navigator.mediaDevices.enumerateDevices().then(function (mediaDeviceInfoList) {
-        var videoDevices = mediaDeviceInfoList.filter(function (deviceInfo) {
+    return navigator.mediaDevices.enumerateDevices().then(function(mediaDeviceInfoList) {
+        var videoDevices = mediaDeviceInfoList.filter(function(deviceInfo) {
             return deviceInfo.kind == "videoinput";
         });
         if (videoDevices.length < 1) {
@@ -109,8 +112,8 @@ const getMediaStream = () => {
         return navigator.mediaDevices.getUserMedia({
             audio: false,
             video: {
-                deviceId: videoDevices[0].deviceId,
-            },
+                deviceId: videoDevices[0].deviceId
+            }
         });
     });
 };
