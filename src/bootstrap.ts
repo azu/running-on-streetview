@@ -137,7 +137,6 @@ const load = async (APIKey?: string) => {
     document.head.appendChild(script);
     // Get MediaStream
     const mediaStream = await getMediaStream();
-    debug("MediaStream", mediaStream);
     _videoStream.resolve(mediaStream);
     videoElement.srcObject = mediaStream;
 };
