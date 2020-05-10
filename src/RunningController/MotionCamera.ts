@@ -41,6 +41,7 @@ export const activateMotionCamera = (
     });
     // 12fps?
     const TICK_BUFFER_COUNT = 12;
+    let animationFrameId: number | null = null;
     const tick = () => {
         const videoWidth = videoElement.width;
         const videoHeight = videoElement.height;
@@ -64,9 +65,13 @@ export const activateMotionCamera = (
         // reset
         diffMemory.length = 0;
         // console.log("diff %i, percent: %s", diff, (diff / newImage.data.length) * 100);
-        requestAnimationFrame(() => tick());
+        animationFrameId = requestAnimationFrame(() => tick());
     };
-    requestAnimationFrame(() => tick());
+    animationFrameId = requestAnimationFrame(() => tick());
     // https://w3c.github.io/uievents/tools/key-event-viewer.html
-    return () => {};
+    return () => {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+        }
+    };
 };
