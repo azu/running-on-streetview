@@ -175,7 +175,7 @@ export const run = async ({
         pano: lastPanoramaState?.pano,
         zoom: 1,
     });
-    const { moveForward, moveBackward, turnLeft, turnRight, unload, getState, load } = runStreetView(
+    const { moveForward, moveBackward, turnLeft, turnRight, unload: unloadStreetView, getState, load } = runStreetView(
         {
             google,
             panorama: streetViewPanorama,
@@ -295,9 +295,9 @@ For more details, please see https://github.com/azu/running-on-streetview
         mapUrl: createStreetViewURL(initialPosition, initialPov),
     });
     return () => {
-        streetViewPanorama.unbindAll();
         return Promise.all([
-            unload(),
+            streetViewPanorama.unbindAll(),
+            unloadStreetView(),
             unloadLoadMap(),
             unloadStatusButton(),
             unloadVisibleController(),
