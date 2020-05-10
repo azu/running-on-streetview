@@ -48,6 +48,13 @@ This app support some url parameters:
 
 For more details, see [src/bootstrap.ts](src/bootstrap.ts)
 
+### Overlay video on FullScreen
+
+Modern browser support Picture-in-Picture.
+
+- Chrome: Select "Picture-in-Picture" on video element's context menu
+- Firefox: <https://support.mozilla.org/en-US/kb/about-picture-picture-firefox>
+
 ## Changelog
 
 See [Releases page](https://github.com/azu/running-on-streetview/releases).
