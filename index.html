@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Running on StreetView</title>
@@ -12,7 +13,9 @@
             height: 100%;
         }
 
-        html, body, .App {
+        html,
+        body,
+        .App {
             height: 100%;
             margin: 0;
             padding: 0;
@@ -46,7 +49,8 @@
         }
 
         /* StreetView */
-        .StreetView, .StreetView-map {
+        .StreetView,
+        .StreetView-map {
             width: 100%;
             height: 100%;
         }
@@ -95,8 +99,19 @@
             display: flex;
         }
 
-        .RunningController > * {
+        .RunningController > .RunningController-control {
+            flex: 3;
+            max-width: 720px;
+            margin: auto;
+            /* center */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .RunningController > .RunningController-window {
             flex: 1;
+            margin: auto;
+            max-width: 320px;
             /* center */
             display: flex;
             flex-direction: column;
@@ -133,9 +148,9 @@
             align-content: center;
             align-items: center;
         }
-
     </style>
 </head>
+
 <body>
 <div class="App">
     <!-- StreetView -->
@@ -148,10 +163,8 @@
                 </header>
                 <div class="StreetView-placeholderBody">
                     <p class="StreetView-placeholderText">
-                        <a
-                                class="pure-form-message-inline"
-                                href="https://github.com/azu/running-on-streetview"
-                                target="_blank" rel="noopener">Please see usage guide before running!</a>
+                        <a class="pure-form-message-inline" href="https://github.com/azu/running-on-streetview"
+                           target="_blank" rel="noopener">Please see usage guide before running!</a>
                     </p>
                     <img src="./docs/resources/capture-thumb.png" alt="screenshot" height="300"/>
                 </div>
@@ -168,17 +181,18 @@
                         <label for="js-google-map-api-key">Google Map API Key:</label>
                         <input type="password" id="js-google-map-api-key"
                                class="RunningController-inputGoogleMapAPIKey">
-                        <a class="pure-form-message-inline"
-                           style="color:white"
+                        <a class="pure-form-message-inline" style="color:white"
                            href="https://github.com/azu/running-on-streetview#how-to-get-google-map-api-key"
                            rel="noopener">*Required</a>
                     </div>
                     <div class="pure-controls">
-                        <button type="submit" id="js-load-button" class="RunningController-loadButton pure-button">Load
+                        <button type="submit" id="js-load-button"
+                                class="RunningController-loadButton pure-button">Load
                         </button>
                     </div>
                     <div class="pure-controls">
-                        <button type="button" id="js-trial-button" class="RunningController-trialButton pure-button">
+                        <button type="button" id="js-trial-button"
+                                class="RunningController-trialButton pure-button">
                             Free Trial (Limited)
                         </button>
                     </div>
@@ -195,4 +209,5 @@
 </div>
 <script src="./src/bootstrap.ts"></script>
 </body>
+
 </html>
