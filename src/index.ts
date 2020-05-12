@@ -11,6 +11,7 @@ import { createLocationTracker } from "./LocationTracker/LocationTracker";
 import { globalState } from "./GlobalState";
 import LatLngLiteral = google.maps.LatLngLiteral;
 import StreetViewPov = google.maps.StreetViewPov;
+import { FullscreenController } from "./RunningController/FullscreenController/FullscreenController";
 
 const debug = require("debug")("running:index.js");
 /**
@@ -291,6 +292,13 @@ For more details, please see https://github.com/azu/running-on-streetview
             }
         },
     });
+    const unloadFullscreenController = FullscreenController({
+        onFullscreenChanged(status: "fullscreen" | "not-fullscreen") {
+            if (status === "fullscreen") {
+                action.playStatus();
+            }
+        },
+    });
     const { unload: unloadShareButton, update: updateShareButton } = ShareButton(controlContainer, {
         mapUrl: createStreetViewURL(initialPosition, initialPov),
     });
@@ -302,6 +310,7 @@ For more details, please see https://github.com/azu/running-on-streetview
             unloadStatusButton(),
             unloadVisibleController(),
             unloadShareButton(),
+            unloadFullscreenController(),
         ]);
     };
 };
