@@ -1,6 +1,6 @@
 # running-on-streetview
 
-Running on Google Street View.
+This app detect your motion via WebCamera and go forward on Google Street View Map.
 
 [![running-on-streetview image](docs/resources/capture.png)](https://twitter.com/azu_re/status/1258700638990393344)
 
@@ -16,6 +16,7 @@ Running on Google Street View.
 1. Open URL: <https://running-on-streetview.netlify.app>
 2. Input your Google Map API Key
 3. Load Google Map Street View and Running!
+
 
 ## How to get Google Map API Key?
 
