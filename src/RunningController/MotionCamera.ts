@@ -23,7 +23,6 @@ export const activateMotionCamera = (
     {
         videoElement,
     }: {
-        mediaStream: MediaStream;
         videoElement: HTMLVideoElement;
     },
     props: activateMotionCameraProps

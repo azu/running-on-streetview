@@ -26,7 +26,40 @@ class Deferred<T extends any> {
     }
 }
 
-const _videoStream = new Deferred<MediaStream>();
+const videoDeviceId = Number(localStorage.getItem("running-on-streetview.videoDeviceId") || 0);
+const videoStream = new Deferred<MediaStream>();
+type MediaController = { currentMediaStream: MediaStream | null; show(): void; hide(): void };
+const mediaController: MediaController = {
+    currentMediaStream: null,
+    show() {
+        this.currentMediaStream?.getVideoTracks().forEach((track) => {
+            track.enabled = true;
+        });
+    },
+    hide() {
+        this.currentMediaStream?.getVideoTracks().forEach((track) => {
+            track.enabled = false;
+        });
+    },
+};
+videoElement.addEventListener("click", async () => {
+    const currentVideoDeviceId = Number(localStorage.getItem("running-on-streetview.videoDeviceId") || 0);
+    const mediaDeviceInfoList = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = mediaDeviceInfoList.filter(function (deviceInfo) {
+        return deviceInfo.kind == "videoinput";
+    });
+    const nextVideoDeviceId = videoDevices.length - 1 > currentVideoDeviceId ? currentVideoDeviceId + 1 : 0;
+    const mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: {
+            deviceId: videoDevices[nextVideoDeviceId].deviceId,
+        },
+    });
+    mediaController.currentMediaStream = mediaStream;
+    videoElement.srcObject = mediaStream;
+    localStorage.setItem("running-on-streetview.videoDeviceId", String(nextVideoDeviceId));
+});
+
 const defaultMapList = [
     // Japan - Aomori
     "https://www.google.com/maps/@40.6110615,140.9482871,0a,73.7y,1.16h,90t/data=!3m4!1e1!3m2!1sjBsnn5UBd-c3qy7uOagvpQ!2e0?source=apiv3",
@@ -62,14 +95,14 @@ const defaultMapList = [
             url.searchParams.get("defaultMapUrl") ?? defaultMapList[Math.floor(Math.random() * defaultMapList.length)], // random
     };
     controlContainer.innerHTML = "";
-    _videoStream.promise
-        .then(async (mediaStream) => {
+    videoStream.promise
+        .then(async () => {
             globalState.start = true;
             const unload = await run({
                 google,
                 container,
                 controlContainer: controlContainer,
-                mediaStream,
+                mediaController,
                 videoElement,
                 config,
             });
@@ -99,7 +132,7 @@ const defaultMapList = [
 };
 const getMediaStream = () => {
     return navigator.mediaDevices.enumerateDevices().then(function (mediaDeviceInfoList) {
-        var videoDevices = mediaDeviceInfoList.filter(function (deviceInfo) {
+        const videoDevices = mediaDeviceInfoList.filter(function (deviceInfo) {
             return deviceInfo.kind == "videoinput";
         });
         if (videoDevices.length < 1) {
@@ -109,7 +142,7 @@ const getMediaStream = () => {
         return navigator.mediaDevices.getUserMedia({
             audio: false,
             video: {
-                deviceId: videoDevices[0].deviceId,
+                deviceId: videoDevices[videoDeviceId].deviceId,
             },
         });
     });
@@ -137,7 +170,8 @@ const load = async (APIKey?: string) => {
     document.head.appendChild(script);
     // Get MediaStream
     const mediaStream = await getMediaStream();
-    _videoStream.resolve(mediaStream);
+    mediaController.currentMediaStream = mediaStream;
+    videoStream.resolve(mediaStream);
     videoElement.srcObject = mediaStream;
 };
 trialButton.addEventListener("click", () => {

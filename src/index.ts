@@ -70,14 +70,17 @@ export const run = async ({
     google,
     container,
     controlContainer,
-    mediaStream,
+    mediaController,
     videoElement,
     config,
 }: {
     google: GlobalGoogle;
     container: HTMLElement;
     controlContainer: HTMLElement;
-    mediaStream?: MediaStream;
+    mediaController?: {
+        show(): void;
+        hide(): void;
+    };
     videoElement?: HTMLVideoElement;
     config: RunConfig;
 }) => {
@@ -137,18 +140,14 @@ export const run = async ({
                 return;
             }
             state.playingStatus = "running";
-            mediaStream?.getVideoTracks().forEach((track) => {
-                track.enabled = true;
-            });
+            mediaController?.show();
             updateStatusButton({
                 text: state.playingStatus + "🏃",
             });
         },
         stopStatus() {
             state.playingStatus = "stopped";
-            mediaStream?.getVideoTracks().forEach((track) => {
-                track.enabled = false;
-            });
+            mediaController?.hide();
             updateStatusButton({
                 text: state.playingStatus + "🛑",
             });
@@ -241,10 +240,10 @@ For more details, please see https://github.com/azu/running-on-streetview
             turnLeft(5);
         },
     });
-    if (mediaStream && videoElement) {
+    if (videoElement) {
         const thresholdPixel = 1000;
         activateMotionCamera(
-            { mediaStream, videoElement },
+            { videoElement },
             {
                 onTick({ diffPixelCount }) {
                     if (state.playingStatus === "stopped" || state.playingStatus === "expired-trial") {

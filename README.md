@@ -22,7 +22,7 @@ This app detect your motion via WebCamera and go forward on Google Street View M
 
 You can get Google Map API from Google Cloud Platform Console.
 
-- [Get an API Key  |  Maps JavaScript API  |  Google Developers](https://developers.google.com/maps/documentation/javascript/get-api-key)
+- [Get an API Key Maps JavaScript API | Google Developers](https://developers.google.com/maps/documentation/javascript/get-api-key)
 - [【要確認】Google Maps Platform APIキーの取得方法と注意点 | ワードプレステーマTCD](https://design-plus1.com/tcd-w/2018/08/google-maps-platform-api.html)
 - [Google Maps PlatformのAPIキーの取得・発行について - 株式会社ゼンリンデータコム](https://www.zenrin-datacom.net/business/gmapsapi/api_key/index.html)
 
